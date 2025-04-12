@@ -17,6 +17,7 @@ import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -34,14 +35,14 @@ public class MixinTitleScreen extends Screen {
         super(title);
     }
 
-    @Inject(at = @At("HEAD"), method = "initWidgetsNormal(II)V")
-    public void drawMenuButton(int y, int spacingY, CallbackInfo info) {
+    @Inject(at = @At("HEAD"), method = "addNormalWidgets(II)I")
+    public void drawMenuButton(int y, int spacingY, CallbackInfoReturnable<Integer> info) {
         ButtonWidget.Builder continueButtonBuilder = ButtonWidget.builder(Text.translatable("continuebutton.continueButtonTitle"), button -> {
             if (ContinueButtonMod.lastLocal) {
                 if (!ContinueButtonMod.serverName.isBlank()) {
                     QuickPlay.startSingleplayer(client, ContinueButtonMod.serverAddress);
                 } else {
-                    CreateWorldScreen.create(this.client, this);
+                    CreateWorldScreen.show(this.client, this);
                 }
             } else {
                 QuickPlay.startMultiplayer(client, ContinueButtonMod.serverAddress);
